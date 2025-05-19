@@ -1,0 +1,7 @@
+---
+Name: sitemapproxy
+After: '#rootroutes'
+---
+SilverStripe\Control\Director:
+  rules:
+    'sitemap/$Locale/$File': 'Hudhaifas\GoogleSitemapsQueued\Controller\SitemapProxyController'
