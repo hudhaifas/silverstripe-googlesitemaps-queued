@@ -99,6 +99,9 @@ class GenerateSitemapJob extends AbstractQueuedJob implements QueuedJob
     {
         Versioned::set_stage(Versioned::LIVE);
 
+        // Increase memory limit only for this job
+        ini_set('memory_limit', '256M');
+
         $this->sitemapDir = Controller::join_links(Director::publicFolder(), $this->getSitemapPathPrefix());
         if (!is_dir($this->sitemapDir)) {
             mkdir($this->sitemapDir, 0755, true);
@@ -187,6 +190,10 @@ class GenerateSitemapJob extends AbstractQueuedJob implements QueuedJob
         });
 
         $this->saveAndUploadSitemap("{$this->sitemapDir}/{$sitemapInfo['Filename']}", $xml);
+
+        // Free memory after upload
+        unset($xml);
+        gc_collect_cycles();
     }
 
     /**
@@ -223,7 +230,11 @@ class GenerateSitemapJob extends AbstractQueuedJob implements QueuedJob
     protected function saveAndUploadSitemap(string $filepath, string $xml): void
     {
         file_put_contents($filepath, $xml);
-        $this->addMessage ("✅ $filepath saved");
+        $this->addMessage("✅ $filepath saved");
+
+        // Release memory before upload
+        unset($xml);
+        gc_collect_cycles();
 
         $bucket = Environment::getEnv('AWS_BUCKET_NAME');
         if (!$bucket) {
@@ -233,13 +244,15 @@ class GenerateSitemapJob extends AbstractQueuedJob implements QueuedJob
         $client = Injector::inst()->get(S3Client::class);
         $key = Controller::join_links('public', $this->getSitemapPathPrefix(), basename($filepath));
 
+        $stream = fopen($filepath, 'r');
         $client->putObject([
             'Bucket' => $bucket,
             'Key' => $key,
-            'Body' => $xml,
+            'Body' => $stream, // streaming upload
             'ACL' => 'public-read',
             'ContentType' => 'application/xml',
         ]);
+        fclose($stream);
 
         $this->addMessage("☁️  $key uploaded to S3 Bucket");
     }
