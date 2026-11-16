@@ -2,8 +2,8 @@
 
 namespace Hudhaifas\GoogleSitemapsQueued\Model;
 
+use SilverStripe\Model\ModelData;
 use SilverStripe\Core\Environment;
-use SilverStripe\View\ViewableData;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 
@@ -14,7 +14,7 @@ use SilverStripe\Control\Director;
  * for both XSL stylesheets and sitemap files, correctly resolving the base URL
  * using either the CDN or the SilverStripe app domain.
  */
-class SitemapBase extends ViewableData
+class SitemapBase extends ModelData
 {
     /**
      * The relative path from the public root to the sitemap directory.

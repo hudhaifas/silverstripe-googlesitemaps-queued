@@ -2,6 +2,8 @@
 
 namespace Hudhaifas\GoogleSitemapsQueued\Job;
 
+use SilverStripe\Model\List\ArrayList;
+use SilverStripe\Model\ArrayData;
 use Aws\S3\S3Client;
 
 use Hudhaifas\GoogleSitemapsQueued\Helper\SitemapHelper;
@@ -11,9 +13,7 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Environment;
 use SilverStripe\Core\Injector\Injector;
-use SilverStripe\ORM\ArrayList;
 use SilverStripe\Versioned\Versioned;
-use SilverStripe\View\ArrayData;
 use SilverStripe\View\SSViewer;
 
 use Symbiote\QueuedJobs\Services\AbstractQueuedJob;

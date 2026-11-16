@@ -1,7 +1,8 @@
 <?php
 
-namespace Hudhaifas\GooglesitemapsQueued\Helper;
+namespace Hudhaifas\GoogleSitemapsQueued\Helper;
 
+use TractorCow\Fluent\State\FluentState;
 use Closure;
 use SilverStripe\Control\Director;
 
@@ -24,9 +25,9 @@ class SitemapHelper {
             return self::withAlternateBaseURL($domain, $callback);
         };
 
-        if (class_exists(\TractorCow\Fluent\State\FluentState::class)) {
-            return \TractorCow\Fluent\State\FluentState::singleton()->withState(
-                function (\TractorCow\Fluent\State\FluentState $newState) use ($locale, $wrapped) {
+        if (class_exists(FluentState::class)) {
+            return FluentState::singleton()->withState(
+                function (FluentState $newState) use ($locale, $wrapped) {
                     $newState->setLocale($locale);
                     return $wrapped();
                 }
